@@ -4,7 +4,9 @@
   "description": "EventPlanner Backend is a system for managing and organizing events. It allows users to register, create events, invite attendees, and track responses (Going, Maybe, Not Going). It supports advanced search and filtering by keywords, dates, or roles. The project includes phases for user management, event management, Docker integration,and deployment",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon app.js",
+    "auth": "nodemon authServer.js"
   },
   "repository": {
     "type": "git",
@@ -19,7 +21,12 @@
   "homepage": "https://github.com/Mohab-Sobhy/eventplanner-backend#readme",
   "dependencies": {
     "bcrypt": "^6.0.0",
+    "dotenv": "^17.2.3",
     "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
     "pg": "^8.16.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
   }
 }

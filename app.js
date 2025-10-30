@@ -1,8 +1,9 @@
+require("dotenv").config();
 const UserRepo = require('./Model/repos/UserRepo')
 const userRepo = new UserRepo();
 const express = require('express')
 const app = express()
-const PORT = 8080;
+const PORT = process.env.APP_PORT;
 app.use(express.json())
 ///////////Users///////////////////////////
 app.post('/users/register', async (req, res) => {
@@ -20,6 +21,17 @@ app.post('/users/register', async (req, res) => {
 })
 ///////////Users///////////////////////////
 ///////////////////////////////////////////
+const jwt = require("jsonwebtoken");
+function authenticate(req,res,next){
+    const authHeader = req.headers['authorization']
+    const token = authHeader && authHeader.split(' ')[1]
+    if(token == null)return res.sendStatus(401)
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET,(err,user)=>{
+        if(err)return res.sendStatus(403)
+        req.user = user;
+        next()
+    })
+}
 app.listen(PORT, () =>
     console.log(`it's alive on http://localhost:${PORT}`)
 )
