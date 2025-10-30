@@ -1,10 +1,12 @@
-const {clinet} = require('pg')
-const clinet = new client({
-    host:"localhost",
-    user:"postgres",
-    port:5432,
-    password:"rootUser",
-    database:"postgres"
+const { Client } = require('pg');
+const client = new Client({
+    host: "localhost",
+    user: "postgres",
+    port: 5432,
+    password: "rootUser",
+    database: "eventplannerdb"
 })
 
-client.connect
+client.connect();
+
+module.exports = client;

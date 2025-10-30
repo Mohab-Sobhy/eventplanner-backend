@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/Mohab-Sobhy/eventplanner-backend#readme",
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "express": "^5.1.0",
     "pg": "^8.16.3"
   }
