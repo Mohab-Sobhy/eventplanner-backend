@@ -1,12 +1,20 @@
 require("dotenv").config();
 const UserRepo = require('./Model/repos/UserRepo')
 const userRepo = new UserRepo();
-const express = require('express')
+const express = require('express');
+const { validationResult } = require('express-validator');
+const { registerValidator } = require('./Validators/registerValidator');
 const app = express()
 const PORT = process.env.APP_PORT;
 app.use(express.json())
 ///////////Users///////////////////////////
 app.post('/users/register', async (req, res) => {
+
+    const errors = validationResult(req);
+    if(!errors.isEmpty()) {
+        return res.status(400).json({errors: errors.array()});
+    }
+
     const { username, email, password } = req.body
     if (!username || !email || !password) {
         return res.status(400).json({ error: 'missing required values' });
