@@ -21,7 +21,7 @@ exports.register = async (req, res) => {
         return res.status(400).json({ error: 'missing required values' });
     }
     try {
-        await userRepo.addUser(username, email, password)
+        await userRepo.addUser(username, email, password, role='admin')
         return res.status(201).json({ message: `user is added` })
     }
     catch (ex) {
@@ -43,9 +43,12 @@ exports.login = async (req, res) => {
     const user = await userRepo.getUser(email, password);
     if (!user || !user.id) return res.sendStatus(401);
 
-    const accessToken = generateAccessToken({ username: user.username });
+    const accessToken = generateAccessToken({ username: user.username, role: user.role });
     const refreshToken = jwt.sign(
-      { username: user.username },
+      { 
+        username: user.username, 
+        role: user.role
+      },
       process.env.REFRESH_TOKEN_SECRET
     );
 

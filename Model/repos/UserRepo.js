@@ -2,19 +2,27 @@ const bcrypt = require('bcrypt');
 const client = require('./databasepg');
 
 class UserRepo {
-    async addUser(username, email, password) {
+    async addUser(username, email, password, role='user') {
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
         await client.query(
-            `INSERT INTO Users (username,email,password)
-                 values ($1,$2,$3)`,
-            [username, email, hashedPassword]
+            `INSERT INTO Users (username,email,password,role)
+                 values ($1,$2,$3,$4)`,
+            [username, email, hashedPassword, role]
         );
     }
+
+    async getAll() {
+        const result = await client.query(
+            `SELECT * FROM Users`
+        )
+        return result.rows;
+    }
+
     async getUser(email, password) {
         const result = await client.query(
-            `SELECT id, username, email, password 
+            `SELECT id, username, email, password, role 
             FROM Users 
             WHERE email = $1`,
             [email]
@@ -32,7 +40,7 @@ class UserRepo {
         if (!isMatch) {
             throw new Error("Invalid password");
         }
-        return { id: user.id, username: user.username, email: user.email };
+        return { id: user.id, username: user.username, email: user.email, role:user.role };
     }
 }
 
