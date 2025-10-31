@@ -3,7 +3,7 @@ const client = new Client({
     host: "127.0.0.1",
     user: "postgres",
     port: 5432,
-    password: "rootUser",
+    password: "1234",
     database: "eventplannerdb"
 })
 client.connect();
