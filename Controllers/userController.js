@@ -1,7 +1,7 @@
 const UserRepo = require('../Model/repos/UserRepo');
 const userRepo = new UserRepo();
 
-exports.getAllUsers = async (req, res) => {
+async function getAllUsers(req, res) {
   try {
     const users = await userRepo.getAll();
     res.json(users);
@@ -9,4 +9,8 @@ exports.getAllUsers = async (req, res) => {
     console.error('Error fetching users:', err);
     res.status(500).json({ message: 'Server error while retrieving users' });
   }
+}
+
+module.exports = {
+  getAllUsers
 };

@@ -1,6 +1,6 @@
-import { body } from "express-validator";
+const { body } = require("express-validator");
 
-export const registerValidator = [
+const registerValidator = [
   body("email")
     .trim()
     .isEmail().withMessage("Invalid email format")
@@ -18,3 +18,5 @@ export const registerValidator = [
     .matches(/[a-z]/).withMessage("Password must contain at least one lowercase letter")
     .matches(/[0-9]/).withMessage("Password must contain at least one number")
 ];
+
+module.exports = { registerValidator };
