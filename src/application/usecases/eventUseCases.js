@@ -55,35 +55,6 @@ class EventUseCases {
     return await eventRepository.inviteUser(eventId, userId, inviterId);
   }
 
-  async getAttendees(eventId, organizerId) {
-    // Verify event exists
-    const event = await eventRepository.findById(eventId);
-    if (!event) {
-      throw new Error('Event not found');
-    }
-
-    return await eventRepository.getAttendees(eventId, organizerId);
-  }
-
-  async updateAttendanceStatus(eventId, userId, statusName) {
-    // Verify event exists
-    const event = await eventRepository.findById(eventId);
-    if (!event) {
-      throw new Error('Event not found');
-    }
-
-    // Get status
-    const status = await statusRepository.findByName(statusName);
-    if (!status) {
-      throw new Error('Invalid status. Valid statuses: Going, Maybe, Not Going');
-    }
-
-    return await eventRepository.updateAttendanceStatus(eventId, userId, status.id);
-  }
-
-  async searchEvents(keywords, startDate, endDate, userId, roleFilter) {
-    return await eventRepository.searchEvents(keywords, startDate, endDate, userId, roleFilter);
-  }
 }
 
 export default new EventUseCases();

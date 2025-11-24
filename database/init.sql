@@ -82,5 +82,5 @@ INSERT INTO roles (role) VALUES ('organizer'), ('attendee')
     ON CONFLICT (role) DO NOTHING;
 
 -- Insert statuses
-INSERT INTO statuses (status) VALUES ('Going'), ('Maybe'), ('Not Going')
+INSERT INTO statuses (status) VALUES ('going'), ('maybe'), ('not going')
     ON CONFLICT (status) DO NOTHING;

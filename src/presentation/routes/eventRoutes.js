@@ -14,12 +14,12 @@ router.get('/invited', eventController.getInvitedEvents.bind(eventController));
 router.delete('/:eventId', eventController.deleteEvent.bind(eventController));
 router.post('/:eventId/invite', eventController.inviteUser.bind(eventController));
 
-// Response management
-router.get('/:eventId/attendees', eventController.getAttendees.bind(eventController));
-router.put('/:eventId/attendance', eventController.updateAttendanceStatus.bind(eventController));
+// TODO: Response management
+//router.get('/:eventId/attendees', eventController.getAttendees.bind(eventController));
+//router.put('/:eventId/attendance', eventController.updateAttendanceStatus.bind(eventController));
 
-// Search and filtering
-router.get('/search', eventController.searchEvents.bind(eventController));
+// TODO: Search and filtering
+//router.get('/search', eventController.searchEvents.bind(eventController));
 
 export default router;
 
