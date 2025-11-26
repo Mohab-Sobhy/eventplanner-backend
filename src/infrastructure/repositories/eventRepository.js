@@ -235,6 +235,45 @@ class EventRepository {
     }
   }
 
+  async search(userId, filters) {
+    const { name, date, role } = filters;
+    
+    const params = [userId]; 
+    let paramCount = 1;
+
+    let query = `
+      SELECT e.*, r.role, s.status
+      FROM events e
+      INNER JOIN event_attendance ea ON e.id = ea.event_id
+      INNER JOIN roles r ON ea.role_id = r.id
+      LEFT JOIN statuses s ON ea.status_id = s.id
+      WHERE ea.user_id = $1
+    `;
+
+    if (name) {
+      paramCount++;
+      query += ` AND (e.title ILIKE $${paramCount} OR e.description ILIKE $${paramCount})`;
+      params.push(`%${name}%`);
+    }
+
+    if (date) {
+      paramCount++;
+      query += ` AND e.event_date >= $${paramCount}`;
+      params.push(date);
+    }
+
+    if (role) {
+      paramCount++;
+      query += ` AND r.role = $${paramCount}`;
+      params.push(role.toLowerCase());
+    }
+
+    query += ` ORDER BY e.event_date ASC`;
+
+    const result = await pool.query(query, params);
+    return result.rows;
+  }
+
 
 }
 

@@ -17,8 +17,7 @@ router.post('/:eventId/invite', eventController.inviteUser.bind(eventController)
 router.get('/:eventId/attendees', eventController.getAttendees.bind(eventController));
 router.put('/:eventId/attendance', eventController.updateAttendanceStatus.bind(eventController));
 
-// TODO: Search and filtering
-//router.get('/search', eventController.searchEvents.bind(eventController));
+router.get('/search', eventController.searchEvents.bind(eventController));
 
 export default router;
 

@@ -143,6 +143,22 @@ class EventController {
     }
   }
 
+  async searchEvents(req, res) {
+    try {
+      const userId = req.user.userId;
+      const { name, date, role } = req.query;
+
+      const events = await eventUseCases.searchEvents(userId, { 
+        name, 
+        date, 
+        role 
+      });
+
+      return res.status(200).json(success(events));
+    } catch (err) {
+      return res.status(500).json(error(err.message));
+    }
+  }
 }
 
 export default new EventController();
