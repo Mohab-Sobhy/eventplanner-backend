@@ -4,7 +4,6 @@ import statusRepository from '../../infrastructure/repositories/statusRepository
 
 class EventUseCases {
   async createEvent(title, eventDate, eventTime, location, description, organizerId) {
-    // Validate required fields
     if (!title || !eventDate || !eventTime) {
       throw new Error('Title, date, and time are required');
     }
@@ -53,6 +52,17 @@ class EventUseCases {
     }
 
     return await eventRepository.inviteUser(eventId, userId, inviterId);
+  }
+
+  async getAttendeesInEvent(userId, eventId) {
+    if(!eventId) throw new Error('Event Id is required');
+    return await eventRepository.findAttendeesInEvent(userId, eventId);
+  }
+
+  async updateAttendeeStatus(userId, eventId, status) {
+    if(!eventId) throw new Error('Event Id is required');
+    if(!status) throw new Error('Status is required')
+    await eventRepository.updateAttendeeStatus(userId,eventId, status);
   }
 
 }

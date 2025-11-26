@@ -91,6 +91,58 @@ class EventController {
     }
   }
 
+  async getAttendees(req, res) {
+    try {
+      const userId = req.user.userId;
+      const {eventId} = req.params;
+      const attendees = await eventUseCases.getAttendeesInEvent(userId, parseInt(eventId));
+      if(attendees.length === 0) {
+        return res.status(200).json(success('No Attendees found for this event'));
+      }
+      return res.status(200).json(success(attendees));
+    }
+    catch (err) {
+    if (err.message === 'Event not found') {
+      return res.status(404).json(fail({ event: err.message }));
+    }
+    if (err.message === 'Only organizer can view attendees') { 
+      return res.status(403).json(fail({ permission: err.message }));
+    }
+    return res.status(500).json(error(err.message));
+  }
+  }
+
+  async updateAttendanceStatus(req, res) {
+    try {
+      const userId = req.user.userId;
+      const { eventId } = req.params;
+      const { status } = req.body;
+
+      const updatedAttendance = await eventUseCases.updateAttendeeStatus(
+        userId, 
+        parseInt(eventId), 
+        status
+      );
+
+      return res.status(200).json(success(updatedAttendance, 'Attendee status has been updated'));
+    } catch (err) {
+      if(err.message === 'Status is required') {
+        return res.status(400).json(fail({ status: 'Status is required' }));
+      }
+      if (err.message === 'Only invited attendees can set their status') {
+        return res.status(403).json(fail({ permission: err.message }));
+      }
+      if (err.message === 'Invalid status provided') {
+        return res.status(400).json(fail({ status: err.message }));
+      }
+      if (err.message === 'Event not found') {
+        return res.status(404).json(fail({ event: err.message }));
+      }
+
+      return res.status(500).json(error(err.message));
+    }
+  }
+
 }
 
 export default new EventController();

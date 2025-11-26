@@ -161,6 +161,81 @@ class EventRepository {
     }
   }
 
+  async findAttendeesInEvent(userId, eventId) {
+
+    const checkQuery = `
+      SELECT ea.role_id, r.role
+      FROM event_attendance ea
+      INNER JOIN roles r ON ea.role_id = r.id
+      WHERE ea.event_id = $1 AND ea.user_id = $2
+    `;
+
+    const checkResult = await pool.query(checkQuery, [eventId, userId]);
+
+    if (!checkResult.rows[0] || checkResult.rows[0].role !== 'organizer') {
+      throw new Error('Only organizer can view attendees');
+    }
+
+    const getAttendeesQuery = `
+      SELECT u.first_name, u.last_name, s.status
+      FROM event_attendance ea
+      INNER JOIN users u ON ea.user_id = u.id
+      LEFT JOIN statuses s ON ea.status_id = s.id
+      INNER JOIN roles r ON ea.role_id = r.id
+      WHERE ea.event_id = $1 AND r.role = 'attendee'
+    `;
+
+    const result = await pool.query(getAttendeesQuery, [eventId]);
+    return result.rows;
+  }
+
+  async updateAttendeeStatus(userId, eventId, status) { 
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+
+      const checkQuery = `
+        SELECT ea.role_id, r.role
+        FROM event_attendance ea
+        INNER JOIN roles r ON ea.role_id = r.id 
+        WHERE ea.event_id = $1 AND ea.user_id = $2
+      `;
+
+      const checkResult = await client.query(checkQuery, [eventId, userId]);
+
+      if (!checkResult.rows[0] || checkResult.rows[0].role !== 'attendee') {
+        throw new Error('Only attendees can set their status');
+      }
+
+      const statusIdQuery = `SELECT id FROM statuses WHERE status = $1`;
+      const statusIdResult = await client.query(statusIdQuery, [status]);
+
+      if (statusIdResult.rows.length === 0) {
+        throw new Error('Invalid status provided');
+      }
+      const statusId = statusIdResult.rows[0].id;
+
+      const updateStatusQuery = `
+        UPDATE event_attendance
+        SET status_id = $1
+        WHERE event_id = $2 AND user_id = $3
+        RETURNING *
+      `;
+      
+      const result = await client.query(updateStatusQuery, [statusId, eventId, userId]);
+
+      await client.query('COMMIT');
+      return result.rows[0];
+
+    } catch (error) {
+      await client.query('ROLLBACK');
+      throw error;
+    } finally {
+      client.release();
+    }
+  }
+
+
 }
 
 export default new EventRepository();
