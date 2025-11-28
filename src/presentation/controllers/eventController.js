@@ -147,6 +147,7 @@ class EventController {
     try {
       const { keywords, startDate, endDate, role } = req.query;
       const userId = req.user.userId;
+
       const events = await eventUseCases.searchEvents(
         keywords,
         startDate,
@@ -154,6 +155,7 @@ class EventController {
         userId,
         role
       );
+
       return res.status(200).json(success(events));
     } catch (err) {
       return res.status(500).json(error(err.message));

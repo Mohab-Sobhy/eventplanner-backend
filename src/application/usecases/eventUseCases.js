@@ -39,11 +39,13 @@ class EventUseCases {
   }
 
   async inviteUserByEmail(eventId, email, inviterId) {
+    // Verify event exists
     const event = await eventRepository.findById(eventId);
     if (!event) {
       throw new Error('Event not found');
     }
 
+    // Verify user exists
     const user = await userRepository.findByEmail(email);
     if (!user) {
       throw new Error('User not found');
