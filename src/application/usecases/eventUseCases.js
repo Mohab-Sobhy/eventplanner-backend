@@ -65,14 +65,8 @@ class EventUseCases {
     await eventRepository.updateAttendeeStatus(userId,eventId, status);
   }
 
-  async searchEvents(userId, filters) {
-    const searchParams = {
-      name: filters.name,
-      date: filters.date, 
-      role: filters.role
-    };
-
-    return await eventRepository.search(userId, searchParams);
+  async searchEvents(keywords, startDate, endDate, userId, roleFilter) {
+    return await eventRepository.searchEvents(keywords, startDate, endDate, userId, roleFilter);
   }
 
 }

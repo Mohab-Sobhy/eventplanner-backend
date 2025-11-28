@@ -234,47 +234,57 @@ class EventRepository {
       client.release();
     }
   }
-
-  async search(userId, filters) {
-    const { name, date, role } = filters;
-    
-    const params = [userId]; 
-    let paramCount = 1;
-
+async searchEvents(keywords, startDate, endDate, userId, roleFilter) {
     let query = `
-      SELECT e.*, r.role, s.status
+      SELECT DISTINCT e.*, r.role, s.status
       FROM events e
       INNER JOIN event_attendance ea ON e.id = ea.event_id
       INNER JOIN roles r ON ea.role_id = r.id
       LEFT JOIN statuses s ON ea.status_id = s.id
-      WHERE ea.user_id = $1
+      WHERE 1=1
     `;
+    const params = [];
+    let paramCount = 0;
 
-    if (name) {
+    if (keywords) {
       paramCount++;
-      query += ` AND (e.title ILIKE $${paramCount} OR e.description ILIKE $${paramCount})`;
-      params.push(`%${name}%`);
+      query += ` AND (
+        e.title ILIKE $${paramCount} OR
+        e.description ILIKE $${paramCount} OR
+        e.location ILIKE $${paramCount}
+      )`;
+      params.push(`%${keywords}%`);
     }
 
-    if (date) {
+    if (startDate) {
       paramCount++;
       query += ` AND e.event_date >= $${paramCount}`;
-      params.push(date);
+      params.push(startDate);
     }
 
-    if (role) {
+    if (endDate) {
+      paramCount++;
+      query += ` AND e.event_date <= $${paramCount}`;
+      params.push(endDate);
+    }
+
+    if (userId) {
+      paramCount++;
+      query += ` AND ea.user_id = $${paramCount}`;
+      params.push(userId);
+    }
+
+    if (roleFilter) {
       paramCount++;
       query += ` AND r.role = $${paramCount}`;
-      params.push(role.toLowerCase());
+      params.push(roleFilter);
     }
 
-    query += ` ORDER BY e.event_date ASC`;
+    query += ` ORDER BY e.event_date DESC, e.event_time DESC`;
 
     const result = await pool.query(query, params);
     return result.rows;
   }
-
-
 }
 
 export default new EventRepository();
