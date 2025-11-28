@@ -38,20 +38,18 @@ class EventUseCases {
     return await eventRepository.delete(eventId, userId);
   }
 
-  async inviteUser(eventId, userId, inviterId) {
-    // Verify event exists
+  async inviteUserByEmail(eventId, email, inviterId) {
     const event = await eventRepository.findById(eventId);
     if (!event) {
       throw new Error('Event not found');
     }
 
-    // Verify user exists
-    const user = await userRepository.findById(userId);
+    const user = await userRepository.findByEmail(email);
     if (!user) {
       throw new Error('User not found');
     }
 
-    return await eventRepository.inviteUser(eventId, userId, inviterId);
+    return await eventRepository.inviteUser(eventId, user.id, inviterId);
   }
 
   async getAttendeesInEvent(userId, eventId) {

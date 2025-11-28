@@ -67,18 +67,18 @@ class EventController {
   async inviteUser(req, res) {
     try {
       const { eventId } = req.params;
-      const { userId } = req.body;
+      const { email } = req.body;
       const inviterId = req.user.userId;
 
-      if (!userId) {
-        return res.status(400).json(fail({ userId: 'User ID is required' }));
+      if (!email) {
+        return res.status(400).json(fail({ email: 'Email is required' }));
       }
 
-      await eventUseCases.inviteUser(parseInt(eventId), parseInt(userId), inviterId);
+      await eventUseCases.inviteUserByEmail(parseInt(eventId), email, inviterId);
 
       return res.status(200).json(success(null, 'User invited successfully'));
     } catch (err) {
-      if (err.message === 'Event not found' || err.message === 'User not found') {
+      if (['Event not found', 'User not found'].includes(err.message)) {
         return res.status(404).json(fail({ resource: err.message }));
       }
       if (err.message === 'Only organizer can invite users') {
