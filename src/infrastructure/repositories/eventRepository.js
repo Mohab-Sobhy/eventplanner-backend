@@ -274,7 +274,6 @@ class EventRepository {
     return result.rows;
   }
 
-
 }
 
 export default new EventRepository();
