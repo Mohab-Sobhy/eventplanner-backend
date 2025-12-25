@@ -45,25 +45,62 @@ npm install
 
 2. Set up environment variables:
 ```bash
-cp .env.example .env
-# Edit .env with your database credentials
+# The .env file is already configured for Neon PostgreSQL
+# SSL is configured to accept self-signed certificates
 ```
 
 3. Set up the database:
-- Create a PostgreSQL database
-- Run the provided SQL schema to create tables
-- Insert initial data for roles and statuses:
-  ```sql
-  INSERT INTO roles (role) VALUES ('organizer'), ('attendee');
-  INSERT INTO statuses (status) VALUES ('Going'), ('Maybe'), ('Not Going');
-  ```
+- The database schema is automatically created when the server starts
+- Initial data for roles and statuses is inserted automatically
 
-4. Start the server:
+4. (Optional) Generate SSL certificates for HTTPS:
+```bash
+npm run generate-ssl
+# Then update .env with the certificate paths
+```
+
+5. Start the server:
 ```bash
 npm start
 # or for development with auto-reload
 npm run dev
 ```
+
+## SSL/TLS Configuration
+
+### Database SSL (Already Configured)
+The application is configured to connect to Neon PostgreSQL with SSL enabled and accepts self-signed certificates:
+- `DB_SSL=true`
+- `DB_SSL_REJECT_UNAUTHORIZED=false`
+
+### HTTPS Server (Optional)
+To enable HTTPS for the API server:
+
+1. Generate self-signed certificates:
+```bash
+npm run generate-ssl
+```
+
+2. Update your `.env` file:
+```env
+SSL_CERT_PATH=./ssl/cert.pem
+SSL_KEY_PATH=./ssl/private.key
+HTTPS_PORT=8443
+```
+
+3. Restart the server - it will run both HTTP and HTTPS
+
+### Troubleshooting SSL Issues
+
+**"self-signed certificate" error:**
+- **Database connection**: Ensure `DB_SSL_REJECT_UNAUTHORIZED=false` in your `.env`
+- **API requests**: If using HTTPS, ensure your client accepts self-signed certificates
+- **Database tools**: When connecting with external tools, configure them to accept self-signed certificates
+
+**Database connection issues:**
+- Verify your Neon database credentials in `.env`
+- Check if your IP is allowlisted in Neon dashboard
+- Ensure the database is not paused
 
 ## API Endpoints
 
